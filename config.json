@@ -1,11 +1,11 @@
 {
   "server": "kafka.wag.local:9192",
-  "username": "usr_idm-migration-ciam",
-  "password": "X(s2O-M1DDTl&fF?",
+  "username": "****",
+  "password": "****",
   "ca_file": "web_ca_prod.pem",
   "topic": "com.idm.identity.migration",
   "output": "results/dispatcher_emails_prod_12082025_3.csv",
   "sasl_mechanism": "PLAIN",
   "security_protocol": "SASL_SSL",
-  "group_id": "usr-idm-migration-ciam.python1"
+  "group_id": "****"
 }
