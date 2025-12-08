@@ -1,9 +1,9 @@
 {
-  "server": "kafka.wag.local:9192",
+  "server": "****",
   "username": "****",
   "password": "****",
-  "ca_file": "web_ca_prod.pem",
-  "topic": "com.idm.identity.migration",
+  "ca_file": "****",
+  "topic": "****",
   "output": "results/dispatcher_emails_prod_12082025_3.csv",
   "sasl_mechanism": "PLAIN",
   "security_protocol": "SASL_SSL",
