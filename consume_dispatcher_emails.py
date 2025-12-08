@@ -63,7 +63,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--group-id",
-        default="dispatcher-email-extractor",
+        default=None,
         help="Consumer group ID used when connecting to Kafka",
     )
     parser.add_argument(
@@ -100,6 +100,11 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="SASL password when using authenticated clusters",
     )
+    parser.add_argument(
+        "--ca-file",
+        default=None,
+        help="CA file for Kafka broker",
+    )
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -110,6 +115,8 @@ def parse_args() -> argparse.Namespace:
     args.sasl_mechanism = args.sasl_mechanism or config.get("sasl_mechanism", "PLAIN")
     args.sasl_username = args.sasl_username or config.get("username")
     args.sasl_password = args.sasl_password or config.get("password")
+    args.group_id = args.group_id or config.get("group_id")
+    args.ca_file = args.ca_file or config.get("ca_file")
 
     return args
 
@@ -128,6 +135,7 @@ def extract_dispatcher_record(payload: Dict[str, Any]) -> Optional[Dict[str, str
         return None
 
     if header.get("type") != DISPATCHER_TYPE:
+        print("Not a dispatcher message")
         return None
 
     email = body.get("email")
@@ -135,9 +143,9 @@ def extract_dispatcher_record(payload: Dict[str, Any]) -> Optional[Dict[str, str
         return None
 
     return {
-        "correlationId": header.get("correlationId", ""),
-        "migrationRunId": header.get("migrationRunId", ""),
-        "email": email,
+        # "correlationId": header.get("correlationId", ""),
+        # "migrationRunId": header.get("migrationRunId", ""),
+        "email": email
     }
 
 
@@ -154,6 +162,8 @@ def consume_messages(args: argparse.Namespace) -> Iterable[Dict[str, str]]:
         sasl_mechanism=args.sasl_mechanism,
         sasl_plain_username=args.sasl_username,
         sasl_plain_password=args.sasl_password,
+        ssl_check_hostname=False,
+        ssl_cafile=args.ca_file
     )
 
     try:
@@ -169,13 +179,14 @@ def consume_messages(args: argparse.Namespace) -> Iterable[Dict[str, str]]:
 
             record = extract_dispatcher_record(payload)
             if record:
+                print("Dispatcher found: ", record)
                 yield record
     finally:
         consumer.close()
 
 
 def write_csv(records: Iterable[Dict[str, str]], output_file) -> None:
-    fieldnames = ["correlationId", "migrationRunId", "email"]
+    fieldnames = ["email"]
     writer = csv.DictWriter(
         output_file, fieldnames=fieldnames, quoting=csv.QUOTE_ALL, lineterminator="\n"
     )

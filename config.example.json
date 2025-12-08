@@ -1,8 +1,0 @@
-{
-  "server": "your-kafka-server:9092",
-  "username": "your-username",
-  "password": "your-password",
-  "topic": "migration-requests",
-  "output": "dispatcher_emails.csv",
-  "sasl_mechanism": "PLAIN"
-}

@@ -10,11 +10,15 @@ and DISPATCHER request emails to a quoted CSV file.
 
 - Python 3.8+
 - Kafka cluster reachable from your machine
-- [kafka-python](https://pypi.org/project/kafka-python/) installed:
+- [kafka-python](https://pypi.org/project/kafka-python/) installed
+- python-snappy installed (for production)
 
+### Dependencies
+All dependecies should be listed in the pyproject.toml file. To install them just run
 ```bash
-pip install kafka-python
+pip install .
 ```
+in the root folder.
 
 ### Example usage
 
